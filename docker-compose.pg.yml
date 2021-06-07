@@ -1,0 +1,134 @@
+version: '3.4'
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - '/var/run/docker.sock:/tmp/docker.sock:ro'
+      - './shared/nginx/vhost.d:/etc/nginx/vhost.d'
+      - './shared/nginx/certs:/etc/nginx/certs:ro'
+    networks:
+      proxy: null
+      identityserverui:
+        aliases:
+          - sts.skoruba.local
+          - admin.skoruba.local
+          - admin-api.skoruba.local
+    restart: always
+  skoruba.identityserver4.admin:
+    image: '${DOCKER_REGISTRY-}skoruba-identityserver4-admin'
+    build:
+      context: .
+      dockerfile: src/Skoruba.IdentityServer4.Admin/Dockerfile
+    container_name: skoruba-identityserver4-admin
+    environment:
+      - VIRTUAL_HOST=admin.skoruba.local
+      - 'ConnectionStrings__ConfigurationDbConnection=Server=localhost; User Id=postgres; Database=is4admin; Port=5432; Password=postgres; SSL Mode=Prefer; Trust Server Certificate=true'
+      - 'ConnectionStrings__PersistedGrantDbConnection=Server=localhost; User Id=postgres; Database=is4admin; Port=5432; Password=postgres; SSL Mode=Prefer; Trust Server Certificate=true'
+      - 'ConnectionStrings__IdentityDbConnection=Server=localhost; User Id=postgres; Database=is4admin; Port=5432; Password=postgres; SSL Mode=Prefer; Trust Server Certificate=true'
+      - 'ConnectionStrings__AdminLogDbConnection=Server=localhost; User Id=postgres; Database=is4admin; Port=5432; Password=postgres; SSL Mode=Prefer; Trust Server Certificate=true'
+      - 'ConnectionStrings__AdminAuditLogDbConnection=Server=localhost; User Id=postgres; Database=is4admin; Port=5432; Password=postgres; SSL Mode=Prefer; Trust Server Certificate=true'
+      - 'ConnectionStrings__DataProtectionDbConnection=Server=localhost; User Id=postgres; Database=is4admin; Port=5432; Password=postgres; SSL Mode=Prefer; Trust Server Certificate=true'
+      - 'AdminConfiguration__IdentityAdminBaseUrl=https://admin.skoruba.local'
+      - 'AdminConfiguration__IdentityAdminRedirectUri=https://admin.skoruba.local/signin-oidc'
+      - 'AdminConfiguration__IdentityServerBaseUrl=https://sts.skoruba.local'
+      - AdminConfiguration__RequireHttpsMetadata=false
+      - 'IdentityServerData__Clients__0__ClientUri=https://admin.skoruba.local'
+      - 'IdentityServerData__Clients__0__RedirectUris__0=https://admin.skoruba.local/signin-oidc'
+      - 'IdentityServerData__Clients__0__FrontChannelLogoutUri=https://admin.skoruba.local/signin-oidc'
+      - 'IdentityServerData__Clients__0__PostLogoutRedirectUris__0=https://admin.skoruba.local/signout-callback-oidc'
+      - 'IdentityServerData__Clients__0__AllowedCorsOrigins__0=https://admin.skoruba.local'
+      - 'IdentityServerData__Clients__1__RedirectUris__0=https://admin-api.skoruba.local/swagger/oauth2-redirect.html'
+      - 'Serilog__WriteTo__1__Args__connectionString=Server=localhost; User Id=postgres; Database=is4admin; Port=5432; Password=postgres; SSL Mode=Prefer; Trust Server Certificate=true'
+      - 'DatabaseProviderConfiguration__ProviderType=PostgreSQL'
+      - DockerConfiguration__UpdateCaCertificate=true
+      - ASPNETCORE_ENVIRONMENT=Development
+    command: dotnet Skoruba.IdentityServer4.Admin.dll /seed
+    depends_on:
+      - db
+      - skoruba.identityserver4.sts.identity
+    volumes:
+      - './shared/serilog.json:/app/serilog.json'
+      - './shared/identitydata.json:/app/identitydata.json'
+      - './shared/identityserverdata.json:/app/identityserverdata.json'
+      - './shared/nginx/certs/cacerts.crt:/usr/local/share/ca-certificates/cacerts.crt'
+    networks:
+      identityserverui: null
+  skoruba.identityserver4.admin.api:
+    image: '${DOCKER_REGISTRY-}skoruba-identityserver4-admin-api'
+    build:
+      context: .
+      dockerfile: src/Skoruba.IdentityServer4.Admin.Api/Dockerfile
+    container_name: skoruba-identityserver4-admin-api
+    environment:
+      - VIRTUAL_HOST=admin-api.skoruba.local
+      - AdminApiConfiguration__RequireHttpsMetadata=false
+      - 'AdminApiConfiguration__ApiBaseUrl=https://admin-api.skoruba.local'
+      - 'AdminApiConfiguration__IdentityServerBaseUrl=https://sts.skoruba.local'
+      - 'ConnectionStrings__ConfigurationDbConnection=Server=localhost; User Id=postgres; Database=is4admin; Port=5432; Password=postgres; SSL Mode=Prefer; Trust Server Certificate=true'
+      - 'ConnectionStrings__PersistedGrantDbConnection=Server=localhost; User Id=postgres; Database=is4admin; Port=5432; Password=postgres; SSL Mode=Prefer; Trust Server Certificate=true'
+      - 'ConnectionStrings__IdentityDbConnection=Server=localhost; User Id=postgres; Database=is4admin; Port=5432; Password=postgres; SSL Mode=Prefer; Trust Server Certificate=true'
+      - 'ConnectionStrings__AdminLogDbConnection=Server=localhost; User Id=postgres; Database=is4admin; Port=5432; Password=postgres; SSL Mode=Prefer; Trust Server Certificate=true'
+      - 'ConnectionStrings__AdminAuditLogDbConnection=Server=localhost; User Id=postgres; Database=is4admin; Port=5432; Password=postgres; SSL Mode=Prefer; Trust Server Certificate=true'
+      - 'ConnectionStrings__DataProtectionDbConnection=Server=localhost; User Id=postgres; Database=is4admin; Port=5432; Password=postgres; SSL Mode=Prefer; Trust Server Certificate=true'
+      - 'DatabaseProviderConfiguration__ProviderType=PostgreSQL'
+      - DockerConfiguration__UpdateCaCertificate=true
+      - ASPNETCORE_ENVIRONMENT=Development
+    volumes:
+      - './shared/serilog.json:/app/serilog.json'
+      - './shared/nginx/certs/cacerts.crt:/usr/local/share/ca-certificates/cacerts.crt'
+    networks:
+      identityserverui: null
+  skoruba.identityserver4.sts.identity:
+    image: '${DOCKER_REGISTRY-}skoruba-identityserver4-sts-identity'
+    build:
+      context: .
+      dockerfile: src/Skoruba.IdentityServer4.STS.Identity/Dockerfile
+    container_name: skoruba-identityserver4-sts-identity
+    environment:
+      - VIRTUAL_HOST=sts.skoruba.local
+      - 'ConnectionStrings__ConfigurationDbConnection=Server=localhost; User Id=postgres; Database=is4admin; Port=5432; Password=postgres; SSL Mode=Prefer; Trust Server Certificate=true'
+      - 'ConnectionStrings__PersistedGrantDbConnection=Server=localhost; User Id=postgres; Database=is4admin; Port=5432; Password=postgres; SSL Mode=Prefer; Trust Server Certificate=true'
+      - 'ConnectionStrings__IdentityDbConnection=Server=localhost; User Id=postgres; Database=is4admin; Port=5432; Password=postgres; SSL Mode=Prefer; Trust Server Certificate=true'
+      - 'ConnectionStrings__DataProtectionDbConnection=Server=localhost; User Id=postgres; Database=is4admin; Port=5432; Password=postgres; SSL Mode=Prefer; Trust Server Certificate=true'
+      - 'AdminConfiguration__IdentityAdminBaseUrl=https://admin.skoruba.local'
+      - 'AdminConfiguration__PageTitle=imPlatform'
+      - 'AdminConfiguration__HomePageLogoUri=~/images/maltese.png'
+      - 'AdminConfiguration__Theme=darkly'
+      - 'AdvancedConfiguration__PublicOrigin=https://sts.skoruba.local'
+      - 'AdvancedConfiguration__IssuerUri=https://sts.skoruba.local'
+      - 'DatabaseProviderConfiguration__ProviderType=PostgreSQL'
+      - DockerConfiguration__UpdateCaCertificate=true
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - db
+    volumes:
+      - './shared/serilog.json:/app/serilog.json'
+      - './shared/nginx/certs/cacerts.crt:/usr/local/share/ca-certificates/cacerts.crt'
+    networks:
+      identityserverui:
+        aliases:
+          - sts.skoruba.local
+  db:
+    image: 'postgres'
+    ports:
+      - '7900:5432'
+    container_name: skoruba-identityserver4-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:      
+      - dbdata:/var/lib/postgresql/data
+    networks:
+      identityserverui: null
+volumes:
+  dbdata:
+    driver: local
+networks:
+  proxy:
+    driver: bridge
+  identityserverui:
+    driver: bridge

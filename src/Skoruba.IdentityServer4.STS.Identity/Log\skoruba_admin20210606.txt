@@ -1,0 +1,79 @@
+2021-06-06 03:04:20.133 -04:00 [ERR] An error occurred using the connection to database 'is4admin' on server 'tcp://localhost:5432'.
+2021-06-06 03:04:20.203 -04:00 [ERR] An exception occurred while iterating over the results of a query for context type 'Skoruba.IdentityServer4.Admin.EntityFramework.Shared.DbContexts.IdentityServerDataProtectionDbContext'.
+Npgsql.PostgresException (0x80004005): 3D000: database "is4admin" does not exist
+   at Npgsql.NpgsqlConnector.<>c__DisplayClass160_0.<<DoReadMessage>g__ReadMessageLong|0>d.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at Npgsql.NpgsqlConnector.<>c__DisplayClass160_0.<<DoReadMessage>g__ReadMessageLong|0>d.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at Npgsql.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.ConnectorPool.AllocateLong(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<>c__DisplayClass32_0.<<Open>g__OpenLong|0>d.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at Npgsql.NpgsqlConnection.Open()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenDbConnection(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.Open(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReader(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryingEnumerable`1.Enumerator.InitializeReader(DbContext _, Boolean result)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryingEnumerable`1.Enumerator.MoveNext()
+  Exception data:
+    Severity: FATAL
+    SqlState: 3D000
+    MessageText: database "is4admin" does not exist
+    File: postinit.c
+    Line: 877
+    Routine: InitPostgres
+Npgsql.PostgresException (0x80004005): 3D000: database "is4admin" does not exist
+   at Npgsql.NpgsqlConnector.<>c__DisplayClass160_0.<<DoReadMessage>g__ReadMessageLong|0>d.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at Npgsql.NpgsqlConnector.<>c__DisplayClass160_0.<<DoReadMessage>g__ReadMessageLong|0>d.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at Npgsql.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.ConnectorPool.AllocateLong(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<>c__DisplayClass32_0.<<Open>g__OpenLong|0>d.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at Npgsql.NpgsqlConnection.Open()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenDbConnection(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.Open(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReader(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryingEnumerable`1.Enumerator.InitializeReader(DbContext _, Boolean result)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryingEnumerable`1.Enumerator.MoveNext()
+  Exception data:
+    Severity: FATAL
+    SqlState: 3D000
+    MessageText: database "is4admin" does not exist
+    File: postinit.c
+    Line: 877
+    Routine: InitPostgres
+2021-06-06 03:04:20.215 -04:00 [ERR] An error occurred while reading the key ring.
+Npgsql.PostgresException (0x80004005): 3D000: database "is4admin" does not exist
+   at Npgsql.NpgsqlConnector.<>c__DisplayClass160_0.<<DoReadMessage>g__ReadMessageLong|0>d.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at Npgsql.NpgsqlConnector.<>c__DisplayClass160_0.<<DoReadMessage>g__ReadMessageLong|0>d.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at Npgsql.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.ConnectorPool.AllocateLong(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<>c__DisplayClass32_0.<<Open>g__OpenLong|0>d.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at Npgsql.NpgsqlConnection.Open()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenDbConnection(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.Open(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReader(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryingEnumerable`1.Enumerator.InitializeReader(DbContext _, Boolean result)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryingEnumerable`1.Enumerator.MoveNext()
+   at System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   at System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   at Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.EntityFrameworkCoreXmlRepository`1.GetAllElements()
+   at Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager.GetAllKeys()
+   at Microsoft.AspNetCore.DataProtection.KeyManagement.KeyRingProvider.CreateCacheableKeyRingCore(DateTimeOffset now, IKey keyJustAdded)
+   at Microsoft.AspNetCore.DataProtection.KeyManagement.KeyRingProvider.Microsoft.AspNetCore.DataProtection.KeyManagement.Internal.ICacheableKeyRingProvider.GetCacheableKeyRing(DateTimeOffset now)
+   at Microsoft.AspNetCore.DataProtection.KeyManagement.KeyRingProvider.GetCurrentKeyRingCore(DateTime utcNow, Boolean forceRefresh)
+  Exception data:
+    Severity: FATAL
+    SqlState: 3D000
+    MessageText: database "is4admin" does not exist
+    File: postinit.c
+    Line: 877
+    Routine: InitPostgres
